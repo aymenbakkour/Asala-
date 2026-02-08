@@ -23,9 +23,10 @@
         .hero-banner { background: linear-gradient(135deg, var(--primary), #d35400); color: #fff; padding: 15px; text-align: center; font-family: 'Changa', sans-serif; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
 
         /* البطاقات */
-        .food-card { border: none; border-radius: 20px; background: #fff; box-shadow: 0 6px 15px rgba(0,0,0,0.05); height: 100%; transition: 0.3s; }
+        .food-card { border: none; border-radius: 20px; background: #fff; box-shadow: 0 6px 15px rgba(0,0,0,0.05); height: 100%; transition: 0.3s; position: relative; }
         .card-img-top { height: 140px; object-fit: cover; border-radius: 20px 20px 0 0; }
         .price-tag { color: var(--primary); font-size: 1.2rem; font-weight: 800; }
+        .unit-text { font-size: 0.75rem; color: #888; font-weight: normal; }
         .btn-add { background: var(--primary); color: #fff; border: none; border-radius: 10px; padding: 8px; width: 100%; font-weight: 700; }
 
         /* السلة العائمة */
@@ -126,8 +127,11 @@
                 <div class="col-6 col-md-3">
                     <div class="food-card p-2 text-center">
                         <img src="${i.img}" class="card-img-top">
-                        <div class="food-title mt-2">${i.name}</div>
-                        <div class="price-tag my-2">${i.price.toFixed(2)} €</div>
+                        <div class="food-title mt-2 fw-bold">${i.name}</div>
+                        <div class="my-2">
+                            <span class="price-tag">${i.price.toFixed(2)} €</span>
+                            <div class="unit-text">(سعر القطعة الواحدة)</div>
+                        </div>
                         <select id="qty-${i.id}" class="form-select form-select-sm mb-2 text-center">${opts}</select>
                         <button class="btn btn-add" onclick="addToCart(${i.id})">أضف للسلة</button>
                     </div>
@@ -154,7 +158,10 @@
                 list.innerHTML = cart.map((item, idx) => {
                     total += item.price * item.qty;
                     return `<div class="d-flex justify-content-between align-items-center border-bottom py-2">
-                        <div><b>${item.name}</b> (x${item.qty})<br><small class="text-success">${(item.price*item.qty).toFixed(2)}€</small></div>
+                        <div>
+                            <b>${item.name}</b> (x${item.qty})
+                            <br><small class="text-muted">الحساب: ${(item.price*item.qty).toFixed(2)}€</small>
+                        </div>
                         <i class="fas fa-trash-alt delete-item" onclick="removeItem(${idx})"></i>
                     </div>`;
                 }).join('');
