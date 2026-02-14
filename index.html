@@ -1,50 +1,59 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="ar" dir="rtl" id="main-html">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>مطبخ الأصالة | مأكولات شهية</title>
+    <title>مطبخ الأصالة | Al-Asala Küche</title>
     
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.rtl.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.rtl.min.css" id="bootstrap-link">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Changa:wght@400;700&family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
     
     <style>
         :root { --primary: #e67e22; --dark: #2c3e50; --success: #27ae60; --bg: #fdfbf9; }
-
-        /* منع الزووم نهائياً */
         * { touch-action: manipulation; }
-        body { background-color: var(--bg); font-family: 'Cairo', sans-serif; -webkit-text-size-adjust: 100%; overflow-x: hidden; }
+        body { background-color: var(--bg); font-family: 'Cairo', sans-serif; -webkit-text-size-adjust: 100%; overflow-x: hidden; transition: all 0.3s ease; }
         input, textarea, select, .form-control { font-size: 16px !important; border-radius: 12px !important; }
 
-        /* الهوية البصرية */
         .navbar { background: var(--dark); border-bottom: 4px solid var(--primary); padding: 12px 0; }
-        .navbar-brand { font-family: 'Changa', sans-serif; font-weight: 700; font-size: 1.6rem; color: #fff !important; }
-        .hero-banner { background: linear-gradient(135deg, var(--primary), #d35400); color: #fff; padding: 15px; text-align: center; font-family: 'Changa', sans-serif; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        .navbar-brand { font-family: 'Changa', sans-serif; font-weight: 700; font-size: 1.5rem; color: #fff !important; }
+        
+        /* زر تبديل اللغة */
+        .lang-switcher {
+            background: rgba(255,255,255,0.1);
+            color: white;
+            border: 1px solid var(--primary);
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            font-weight: bold;
+        }
 
-        /* البطاقات */
-        .food-card { border: none; border-radius: 20px; background: #fff; box-shadow: 0 6px 15px rgba(0,0,0,0.05); height: 100%; transition: 0.3s; position: relative; }
+        .hero-banner { background: linear-gradient(135deg, var(--primary), #d35400); color: #fff; padding: 15px; text-align: center; font-family: 'Changa', sans-serif; }
+        .food-card { border: none; border-radius: 20px; background: #fff; box-shadow: 0 6px 15px rgba(0,0,0,0.05); height: 100%; transition: 0.3s; }
         .card-img-top { height: 140px; object-fit: cover; border-radius: 20px 20px 0 0; }
         .price-tag { color: var(--primary); font-size: 1.2rem; font-weight: 800; }
-        .unit-text { font-size: 0.75rem; color: #888; font-weight: normal; }
+        .unit-text { font-size: 0.75rem; color: #888; }
         .btn-add { background: var(--primary); color: #fff; border: none; border-radius: 10px; padding: 8px; width: 100%; font-weight: 700; }
 
-        /* السلة العائمة */
         .cart-float { position: fixed; bottom: 20px; left: 20px; width: 60px; height: 60px; background: var(--success); color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px; z-index: 1000; box-shadow: 0 8px 20px rgba(0,0,0,0.2); border: none; }
+        [dir="ltr"] .cart-float { left: auto; right: 20px; } /* تعديل موقع السلة للغة الألمانية */
 
-        /* المودال */
         .modal-content { border-radius: 25px; border: none; }
         .modal-header { background: var(--dark); color: #fff; border-radius: 25px 25px 0 0; }
-        .delete-item { color: #e74c3c; cursor: pointer; }
     </style>
 </head>
 <body>
 
     <nav class="navbar navbar-dark shadow-sm">
-        <div class="container text-center"><span class="navbar-brand">مطبخ الأصالة <i class="fas fa-utensils ms-2"></i></span></div>
+        <div class="container d-flex justify-content-between align-items-center">
+            <span class="navbar-brand" id="nav-title">مطبخ الأصالة</span>
+            <button class="lang-switcher" onclick="toggleLanguage()" id="lang-btn">Deutsch</button>
+        </div>
     </nav>
 
-    <div class="hero-banner">✨ طعم الشام الأصيل.. بين يديك الآن ✨</div>
+    <div class="hero-banner" id="hero-msg">✨ طعم الشام الأصيل.. بين يديك الآن ✨</div>
 
     <div class="container mt-4 mb-5">
         <div class="row g-3" id="menu-container"></div>
@@ -59,18 +68,18 @@
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title fw-bold">تأكيد طلبك 🛒</h5>
+                    <h5 class="modal-title fw-bold" id="cart-title">تأكيد طلبك 🛒</h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
-                    <div id="cart-items-list" class="mb-3"></div>
+                    <div id="cart-items-list" class="mb-3 text-center"></div>
                     <div class="p-3 bg-light rounded-3 d-flex justify-content-between align-items-center">
-                        <span class="fw-bold">المجموع:</span>
+                        <span class="fw-bold" id="total-lbl">المجموع:</span>
                         <span id="total-price" class="fw-bold text-success fs-4">0.00 €</span>
                     </div>
                 </div>
                 <div class="modal-footer border-0">
-                    <button class="btn btn-warning w-100 py-3 fw-bold rounded-3" onclick="goToCheckout()">إكمال الطلب <i class="fas fa-arrow-left ms-2"></i></button>
+                    <button class="btn btn-warning w-100 py-3 fw-bold rounded-3" onclick="goToCheckout()" id="next-btn">إكمال الطلب <i class="fas fa-arrow-left ms-2"></i></button>
                 </div>
             </div>
         </div>
@@ -80,22 +89,22 @@
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header" style="background: var(--primary);">
-                    <h5 class="modal-title fw-bold">معلومات التوصيل 🚚</h5>
+                    <h5 class="modal-title fw-bold" id="info-title">بيانات الاستلام 🚚</h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
                     <div class="row g-3">
-                        <div class="col-12"><input type="text" id="u-name" class="form-control p-3" placeholder="الاسم الكامل"></div>
-                        <div class="col-12"><input type="tel" id="u-phone" class="form-control p-3" placeholder="رقم الواتساب"></div>
+                        <div class="col-12"><input type="text" id="u-name" class="form-control p-3 trans-input" placeholder="الاسم الكامل"></div>
+                        <div class="col-12"><input type="tel" id="u-phone" class="form-control p-3 trans-input" placeholder="رقم الواتساب"></div>
                         <div class="col-12">
-                            <label class="small text-muted mb-1">تاريخ الاستلام:</label>
+                            <label class="small text-muted mb-1" id="date-lbl">تاريخ الاستلام:</label>
                             <input type="date" id="u-date" class="form-control p-3">
                         </div>
-                        <div class="col-12"><textarea id="u-notes" class="form-control p-3" rows="2" placeholder="ملاحظات إضافية.."></textarea></div>
+                        <div class="col-12"><textarea id="u-notes" class="form-control p-3 trans-input" rows="2" placeholder="ملاحظات إضافية.."></textarea></div>
                     </div>
                 </div>
                 <div class="modal-footer border-0">
-                    <button class="btn btn-success w-100 py-3 fw-bold rounded-3" onclick="finalSend()">ارسال الطلب <i class="fab fa-telegram-plane ms-2"></i></button>
+                    <button class="btn btn-success w-100 py-3 fw-bold rounded-3" onclick="finalSend()" id="send-btn">إرسال الطلب <i class="fab fa-telegram-plane ms-2"></i></button>
                 </div>
             </div>
         </div>
@@ -105,62 +114,122 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <script>
-        // منع التكبير
         document.addEventListener('touchstart', (e) => { if (e.touches.length > 1) e.preventDefault(); }, { passive: false });
 
-        const CONFIG = { token: "8394320495:AAGyRY5siD2sQBbjL_JaoY1h6GH016TGBYM", chatId: "1117141728" };
+        const CONFIG = { token: "8403481919:AAFoM21DzIjqeI8yCfcuaqEBJr4lo3d4qMQ", chatId: "1117141728" };
+
+        let currentLang = 'ar';
+        const translations = {
+            ar: {
+                nav: "مطبخ الأصالة", hero: "✨ طعم الشام الأصيل.. بين يديك الآن ✨", cart: "تأكيد طلبك 🛒",
+                total: "المجموع:", next: "إكمال الطلب", info: "بيانات الاستلام 🚚", date: "تاريخ الاستلام:",
+                send: "إرسال الطلب", empty: "السلة فارغة", piece: "قطعة", unit: "(سعر القطعة الواحدة)",
+                pName: "الاسم الكامل", pPhone: "رقم الواتساب", pNotes: "ملاحظات إضافية..",
+                msgSent: "تم الإرسال!", msgSentText: "وصل طلبك للمطبخ بنجاح", 
+                added: "تمت الإضافة", langBtn: "Deutsch", direction: "rtl",
+                menu: ["كبة مقلية", "كبة مشوية", "كبة لبنية", "برك جبنة"]
+            },
+            de: {
+                nav: "Al-Asala Küche", hero: "✨ Echter Scham-Geschmack.. jetzt bei Ihnen ✨", cart: "Bestellung bestätigen 🛒",
+                total: "Gesamt:", next: "Weiter zur Kasse", info: "Lieferdaten 🚚", date: "Lieferdatum:",
+                send: "Bestellung abschicken", empty: "Warenkorb ist leer", piece: "Stück", unit: "(Preis pro Stück)",
+                pName: "Vollständiger Name", pPhone: "WhatsApp-Nummer", pNotes: "Zusätzliche Anmerkungen..",
+                msgSent: "Gesendet!", msgSentText: "Ihre Bestellung ist in der Küche angekommen", 
+                added: "Hinzugefügt", langBtn: "العربية", direction: "ltr",
+                menu: ["Kibbeh Frittiert", "Kibbeh Gegrillt", "Kibbeh in Joghurt", "Käse-Burek"]
+            }
+        };
 
         const menu = [
-            { id: 1, name: "كبة مقلية", price: 1.50, img: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/88/Kibbeh3.jpg/330px-Kibbeh3.jpg" },
-            { id: 2, name: "كبة مشوية", price: 2.00, img: "https://upload.wikimedia.org/wikipedia/commons/thumb/6/60/Kobbeh.png/330px-Kobbeh.png" },
-            { id: 3, name: "كبة لبنية", price: 1.00, img: "https://upload.wikimedia.org/wikipedia/commons/2/2c/%D9%83%D8%A8%D8%A9_%D9%84%D8%A8%D9%86%D9%8A%D8%A9.jpg" },
-            { id: 4, name: "برك جبنة", price: 0.50, img: "https://img-global.cpcdn.com/recipes/12bfcf2ff2cff20f/1280x1280sq80/photo.webp" }
+            { id: 1, price: 1.50, img: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/88/Kibbeh3.jpg/330px-Kibbeh3.jpg" },
+            { id: 2, price: 2.00, img: "https://upload.wikimedia.org/wikipedia/commons/thumb/6/60/Kobbeh.png/330px-Kobbeh.png" },
+            { id: 3, price: 1.00, img: "https://upload.wikimedia.org/wikipedia/commons/2/2c/%D9%83%D8%A8%D8%A9_%D9%84%D8%A8%D9%86%D9%8A%D8%A9.jpg" },
+            { id: 4, price: 0.50, img: "https://img-global.cpcdn.com/recipes/12bfcf2ff2cff20f/1280x1280sq80/photo.webp" }
         ];
 
         let cart = [];
         let lastId = null;
 
+        function toggleLanguage() {
+            currentLang = (currentLang === 'ar') ? 'de' : 'ar';
+            const htmlTag = document.getElementById('main-html');
+            const bootLink = document.getElementById('bootstrap-link');
+            
+            htmlTag.dir = translations[currentLang].direction;
+            htmlTag.lang = currentLang;
+            
+            // تبديل ملف Bootstrap لدعم الاتجاه LTR أو RTL
+            bootLink.href = (currentLang === 'ar') ? 
+                "https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.rtl.min.css" : 
+                "https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css";
+            
+            updateStaticTexts();
+            renderMenu();
+            updateBadge();
+        }
+
+        function updateStaticTexts() {
+            const t = translations[currentLang];
+            document.getElementById('nav-title').innerText = t.nav;
+            document.getElementById('lang-btn').innerText = t.langBtn;
+            document.getElementById('hero-msg').innerText = t.hero;
+            document.getElementById('cart-title').innerText = t.cart;
+            document.getElementById('total-lbl').innerText = t.total;
+            document.getElementById('next-btn').innerHTML = t.next + (currentLang==='ar'?' <i class="fas fa-arrow-left"></i>':' <i class="fas fa-arrow-right"></i>');
+            document.getElementById('info-title').innerText = t.info;
+            document.getElementById('date-lbl').innerText = t.date;
+            document.getElementById('send-btn').innerHTML = t.send + ' <i class="fab fa-telegram-plane"></i>';
+            
+            // تحديث الـ Placeholders
+            document.getElementById('u-name').placeholder = t.pName;
+            document.getElementById('u-phone').placeholder = t.pPhone;
+            document.getElementById('u-notes').placeholder = t.pNotes;
+        }
+
         function renderMenu() {
             let opts = "";
-            for (let i = 5; i <= 200; i += 5) opts += `<option value="${i}">${i} قطعة</option>`;
-            document.getElementById('menu-container').innerHTML = menu.map(i => `
+            const t = translations[currentLang];
+            for (let i = 5; i <= 200; i += 5) opts += `<option value="${i}">${i} ${t.piece}</option>`;
+            
+            document.getElementById('menu-container').innerHTML = menu.map((item, idx) => `
                 <div class="col-6 col-md-3">
                     <div class="food-card p-2 text-center">
-                        <img src="${i.img}" class="card-img-top">
-                        <div class="food-title mt-2 fw-bold">${i.name}</div>
+                        <img src="${item.img}" class="card-img-top">
+                        <div class="food-title mt-2 fw-bold">${t.menu[idx]}</div>
                         <div class="my-2">
-                            <span class="price-tag">${i.price.toFixed(2)} €</span>
-                            <div class="unit-text">(سعر القطعة الواحدة)</div>
+                            <span class="price-tag">${item.price.toFixed(2)} €</span>
+                            <div class="unit-text">${t.unit}</div>
                         </div>
-                        <select id="qty-${i.id}" class="form-select form-select-sm mb-2 text-center">${opts}</select>
-                        <button class="btn btn-add" onclick="addToCart(${i.id})">أضف للسلة</button>
+                        <select id="qty-${item.id}" class="form-select form-select-sm mb-2 text-center">${opts}</select>
+                        <button class="btn btn-add" onclick="addToCart(${item.id}, '${t.menu[idx]}')">${currentLang==='ar'?'أضف':'Hinzufügen'}</button>
                     </div>
                 </div>`).join('');
         }
 
-        function addToCart(id) {
+        function addToCart(id, name) {
             const p = menu.find(x => x.id === id);
             const q = parseInt(document.getElementById(`qty-${id}`).value);
             const ex = cart.find(c => c.id === id);
-            if (ex) ex.qty += q; else cart.push({ ...p, qty: q });
+            if (ex) ex.qty += q; else cart.push({ ...p, qty: q, currentName: name });
             updateBadge();
-            Swal.fire({ toast: true, position: 'top', icon: 'success', title: 'تمت الإضافة', showConfirmButton: false, timer: 800 });
+            Swal.fire({ toast: true, position: 'top', icon: 'success', title: translations[currentLang].added, showConfirmButton: false, timer: 800 });
         }
 
         function updateBadge() { document.getElementById('cart-badge').innerText = cart.reduce((a, b) => a + b.qty, 0); }
 
         function openCart() {
+            const t = translations[currentLang];
             const list = document.getElementById('cart-items-list');
             let total = 0;
             if (cart.length === 0) {
-                list.innerHTML = '<p class="text-center py-3">السلة فارغة</p>';
+                list.innerHTML = `<p class="py-3">${t.empty}</p>`;
             } else {
                 list.innerHTML = cart.map((item, idx) => {
                     total += item.price * item.qty;
                     return `<div class="d-flex justify-content-between align-items-center border-bottom py-2">
-                        <div>
-                            <b>${item.name}</b> (x${item.qty})
-                            <br><small class="text-muted">الحساب: ${(item.price*item.qty).toFixed(2)}€</small>
+                        <div class="${currentLang==='ar'?'text-end':'text-start'}">
+                            <b>${item.currentName}</b> (x${item.qty})
+                            <br><small class="text-success">${(item.price*item.qty).toFixed(2)}€</small>
                         </div>
                         <i class="fas fa-trash-alt delete-item" onclick="removeItem(${idx})"></i>
                     </div>`;
@@ -173,7 +242,7 @@
         function removeItem(i) { cart.splice(i, 1); updateBadge(); openCart(); }
 
         function goToCheckout() {
-            if (cart.length === 0) return Swal.fire("عذراً", "السلة فارغة", "warning");
+            if (cart.length === 0) return;
             bootstrap.Modal.getInstance(document.getElementById('cartModal')).hide();
             setTimeout(() => { new bootstrap.Modal(document.getElementById('checkoutModal')).show(); }, 400);
         }
@@ -182,39 +251,25 @@
             const name = document.getElementById('u-name').value;
             const phone = document.getElementById('u-phone').value;
             const date = document.getElementById('u-date').value;
-            if (!name || !phone || !date) return Swal.fire("تنبيه", "أكمل البيانات", "error");
+            if (!name || !phone || !date) return;
 
-            let msg = `🍴 *طلب جديد من مطبخ الأصالة*\n👤 *الزبون:* ${name}\n📞 *هاتف:* ${phone}\n📅 *الموعد:* ${date}\n📝 *ملاحظات:* ${document.getElementById('u-notes').value || '-'}\n\n🛒 *الطلبات:* \n`;
+            const t = translations[currentLang];
+            let msg = `🍴 *New Order / طلب جديد*\n👤 ${name}\n📞 ${phone}\n📅 ${date}\n📝 ${document.getElementById('u-notes').value || '-'}\n\n🛒 Items:\n`;
             let total = 0;
-            cart.forEach(i => { msg += `• ${i.name} (x${i.qty}) = ${(i.price*i.qty).toFixed(2)}€\n`; total += i.price*i.qty; });
-            msg += `\n💰 *المجموع: ${total.toFixed(2)} €*`;
+            cart.forEach(i => { msg += `• ${i.currentName} (x${i.qty}) = ${(i.price*i.qty).toFixed(2)}€\n`; total += i.price*i.qty; });
+            msg += `\n💰 Total: ${total.toFixed(2)} €`;
 
             fetch(`https://api.telegram.org/bot${CONFIG.token}/sendMessage`, {
                 method: 'POST', headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ chat_id: CONFIG.chatId, text: msg, parse_mode: "Markdown" })
             }).then(() => {
-                Swal.fire("تم الإرسال!", "وصل طلبك للمطبخ بنجاح", "success");
+                Swal.fire(t.msgSent, t.msgSentText, "success");
                 cart = []; updateBadge();
                 bootstrap.Modal.getInstance(document.getElementById('checkoutModal')).hide();
             });
         }
 
-        async function checkNews() {
-            try {
-                const r = await fetch(`https://api.telegram.org/bot${CONFIG.token}/getUpdates?offset=-1`);
-                const d = await r.json();
-                if (d.ok && d.result.length > 0) {
-                    const m = d.result[0].message;
-                    if (lastId !== null && m.message_id !== lastId) {
-                        Swal.fire({ title: 'رسالة من المطبخ 📢', text: m.text, icon: 'info' });
-                    }
-                    lastId = m.message_id;
-                }
-            } catch(e) {}
-        }
-        setInterval(checkNews, 10000);
-
-        window.onload = () => { renderMenu(); checkNews(); };
+        window.onload = () => { renderMenu(); updateStaticTexts(); };
     </script>
 </body>
 </html>
